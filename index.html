@@ -1,9 +1,64 @@
 <!DOCTYPE html>
-<html>
-<head>
-	<title>Prueba</title>
-</head>
-<body>
-<h1>CATALOGO CARTOGRÁFICO</h1>
-</body>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Catálogo de análisis cartográficos</title>
+    <meta name="author" content="Derek Eder">
+    <meta content="Display any CSV file as a searchable, filterable, pretty HTML table" />
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="row mt-5">
+        <h2>Catálogo de análisis cartográficos</h2>
+      </div>
+ 
+      <div class="row mt-5">
+        <div class="card-columns" id='table'></div>
+      </div>
+    </div>
+
+    <!--<footer class='footer'>
+      <div class='container'>
+        <hr />
+        <p class='pull-right'><a href='http://imeplan.mx/'>CSV to HTML Table</a> by <a href='http://imeplan.mx/'>IMEPLAN</a></p>
+      </div>
+    </footer>-->
+
+    <script type="text/javascript" src="js/jquery.min.js"></script>
+    <script type="text/javascript" src="js/papaparse.min.js"></script>
+    <script type="text/javascript" src="js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+      var csv_data = [];
+      $(document).ready(function(){
+        var config = {download: true, delimiter: ","};
+        var file = "data/rac_18022020.csv";
+
+        var csv = Papa.parse(file, {
+                                    download: true, delimiter: ",",
+                                    complete: function(results) {
+                                      csv_data = results.data;
+                                      loadData();
+                                    }
+                                  });
+      });
+      function loadData(){
+        console.log(csv_data[1]);
+        for(var i = 1; i < csv_data.length; i++){
+          var color = (csv_data[i][24] != '')? csv_data[i][24] : '#989898';
+          var link = (csv_data[i][20] != '')? '<a style="color:#212529;text-decoration: none;" href="'+csv_data[i][20]+'" target="_blank">VER MAPA</a>' : '';
+          var proyecto = csv_data[i][3];
+          var fecha = csv_data[i][0];
+          var titulo = csv_data[i][4];
+          var gerencia = csv_data[i][6];
+
+          $("#table").append("<div class='col-sm-3'><div class='card bg-primary mb-3' style='max-width: 18rem; background-color: "+color+" !important'><div class='card-header'>"+proyecto+" ("+fecha+")</div><div class='card-body'><h5 class='card-title'>"+titulo+"</h5><p class='card-text'>"+gerencia+"</p></div><div class='card-footer bg-transparent'>"+link+"</div></div></div>");
+        }
+      }
+    </script>
+  </body>
 </html>
