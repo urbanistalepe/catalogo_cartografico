@@ -17,8 +17,8 @@
         <h2>Catálogo de análisis cartográficos</h2>
       </div>
  
-      <div class="row mt-5">
-        <div class="card-columns" id='table'></div>
+      <div class="row mt-5" id='table'>
+        <!--<div id='table'></div>-->
       </div>
     </div>
 
@@ -51,12 +51,11 @@
         for(var i = 1; i < csv_data.length; i++){
           var color = (csv_data[i][24] != '')? csv_data[i][24] : '#989898';
           var link = (csv_data[i][20] != '')? '<a style="color:#212529;text-decoration: none;" href="'+csv_data[i][20]+'" target="_blank">VER MAPA</a>' : '';
-          var proyecto = csv_data[i][3];
-          var fecha = csv_data[i][0];
+          var tiulo_proyecto = csv_data[i][1] + " - " + csv_data[i][2];
           var titulo = csv_data[i][4];
           var gerencia = csv_data[i][6];
 
-          $("#table").append("<div class='card bg-primary mb-3' style='max-width: 18rem; background-color: "+color+" !important'><div class='card-header'>"+proyecto+" ("+fecha+")</div><div class='card-body'><h5 class='card-title'>"+titulo+"</h5><p class='card-text'>"+gerencia+"</p></div><div class='card-footer bg-transparent'>"+link+"</div></div>");
+          $("#table").append("<div class='col-3'><div class='card mb-3' style='background-color: "+color+" !important;'><div class='card-header' style='background-color: rgba(0, 0, 0, 0.46);'><ul class='list-group' style='color: "+color+";'><li class='list-group-item' style='background-color: #00000000; border-color: "+color+" !important;'>"+gerencia+"</li></ul><label class='mt-3' style='color: "+color+";'>"+tiulo_proyecto+"</label></div><div class='card-body'><p class='card-text'>"+titulo+"</p></div><div class='card-footer bg-transparent'>"+link+"</div></div></div>");
         }
       }
     </script>
