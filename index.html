@@ -31,51 +31,51 @@
       <div class="row mt-5">
         <div class="col-4">
           <select class="js-states form-control" id="filtro_status" multiple="multiple">
-            <option>En Proceso</option>
-            <option>Validado</option>
+            <!--<option>En Proceso</option>-->
+            <!--<option>Validado</option>-->
           </select>
         </div>
         <div class="col-4">
           <select class="js-states form-control" id="filtro_gerencia" multiple="multiple">
-            <option>(GTGIR) Gerencia Técnica de Gestión Integral del Riesgos.</option>
-            <option>(GTGIR)Gerencia Técnica de Gestión Integral del Riesgos.</option>
-            <option>(GTM) Gerencia Técnica de Movilidad.</option>
-            <option>(GTOTGS) Gerencia Técnica de Ordenamiento Territorial y Gestión del Suelo.</option>
+            <!--<option>(GTGIR) Gerencia Técnica de Gestión Integral del Riesgos.</option>-->
+            <!--<option>(GTGIR)Gerencia Técnica de Gestión Integral del Riesgos.</option>-->
+            <!--<option>(GTM) Gerencia Técnica de Movilidad.</option>-->
+            <!--<option>(GTOTGS) Gerencia Técnica de Ordenamiento Territorial y Gestión del Suelo.</option>-->
           </select>
         </div>
         <div class="col-4">  
           <select class="js-states form-control" id="filtro_tematica_prin" multiple="multiple">
-            <option>DCU</option>
-            <option>DIM</option>
-            <option>GIA</option>
-            <option>GRS</option>
-            <option>HEM</option>
-            <option>IVT</option>
-            <option>PMR</option>
-            <option>POT</option>
-            <option>PRE</option>
-            <option>SRT</option>
+            <!--<option>DCU</option>-->
+            <!--<option>DIM</option>-->
+            <!--<option>GIA</option>-->
+            <!--<option>GRS</option>-->
+            <!--<option>HEM</option>-->
+            <!--<option>IVT</option>-->
+            <!--<option>PMR</option>-->
+            <!--<option>POT</option>-->
+            <!--<option>PRE</option>-->
+            <!--<option>SRT</option>-->
           </select>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col-4">
           <select class="js-states form-control" id="filtro_tematica_sec" multiple="multiple">
-            <option>DCU</option>
-            <option>DIM</option>
-            <option>GIA</option>
-            <option>IVT</option>
-            <option>PMR</option>
-            <option>POT</option>
-            <option>PRE</option>
-            <option>SRT</option>
+            <!--<option>DCU</option>-->
+            <!--<option>DIM</option>-->
+            <!--<option>GIA</option>-->
+            <!--<option>IVT</option>-->
+            <!--<option>PMR</option>-->
+            <!--<option>POT</option>-->
+            <!--<option>PRE</option>-->
+            <!--<option>SRT</option>-->
           </select>
         </div>
         <div class="col-4">
           <select class="js-states form-control" id="filtro_analisis" multiple="multiple">
-            <option>Base</option>
-            <option>Diagnóstico</option>
-            <option>Estratégia</option>
+            <!--<option>Base</option>-->
+            <!--<option>Diagnóstico</option>-->
+            <!--<option>Estratégia</option>-->
           </select>
         </div>
         <div class="col-4">
@@ -83,18 +83,15 @@
         </div>
       </div>
 
-      <nav class="mt-5" aria-label="Page navigation example">
+      <nav class="mt-5">
         <ul class="pagination justify-content-end">
-          <li class="page-item disabled">
-            <a class="page-link" href="#" aria-label="Previous">
+          <li id="page_back_top" class="page-item disabled">
+            <a class="page-link" onclick="changePagination('back');">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li class="page-item"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#" aria-label="Next">
+          <li id="page_next_top" class="page-item">
+            <a class="page-link" onclick="changePagination('next');">
               <span aria-hidden="true">&raquo;</span>
             </a>
           </li>
@@ -104,6 +101,21 @@
       <div class="row mt-3" id='table'>
         <!--<div id='table'></div>-->
       </div>
+
+      <nav class="mt-5">
+        <ul class="pagination justify-content-end">
+          <li id="page_back_bottom" class="page-item disabled">
+            <a class="page-link" onclick="changePagination('back');">
+              <span aria-hidden="true">&laquo;</span>
+            </a>
+          </li>
+          <li id="page_next_bottom" class="page-item">
+            <a class="page-link" onclick="changePagination('next');">
+              <span aria-hidden="true">&raquo;</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
     </div>
 
     <!--<footer class='footer'>
@@ -118,14 +130,9 @@
     <script type="text/javascript" src="js/papaparse.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
-        var filter_status = [];
-        var filter_gerencia = [];
-        var filter_tematica_prin = [];
-        var filter_tematica_sec = [];
-        var filter_tipo = [];
-        var data_csv = [];
-        var paginacion = 0;
-        
+        var filter_status, filter_gerencia, filter_tematica_prin, filter_tematica_sec, filter_tipo, data_csv = [];
+        var start_pagination = 1, limit_pagination = 25, page = 1;
+
       $(document).ready(function(){
         $("#filtro_status").select2({
           width: 'resolve',
@@ -158,30 +165,100 @@
         var csv = Papa.parse(file, {
                                     download: true, delimiter: ",",
                                     complete: function(results) {
+                                      //
                                       data_csv = results.data;
-                                      loadData(results.data, 1, 24);
+
+                                      for( var i = 1; i < data_csv.length; i++){
+                                        if(!($("#filtro_status option[value='"+data_csv[i][5]+"']").length > 0) && data_csv[i][5] != ''){
+                                          $("#filtro_status").append("<option value='"+data_csv[i][5]+"'>"+data_csv[i][5]+"</option>");
+                                        }
+                                        if(!($("#filtro_gerencia option[value='"+data_csv[i][6]+"']").length > 0) && data_csv[i][6] != ''){
+                                          $("#filtro_gerencia").append("<option value='"+data_csv[i][6]+"'>"+data_csv[i][6]+"</option>");
+                                        }
+                                        if(!($("#filtro_tematica_prin option[value='"+data_csv[i][9]+"']").length > 0) && data_csv[i][9] != ''){
+                                          $("#filtro_tematica_prin").append("<option value='"+data_csv[i][9]+"'>"+data_csv[i][9]+"</option>");
+                                        }
+                                        if(!($("#filtro_tematica_sec option[value='"+data_csv[i][10]+"']").length > 0) && data_csv[i][10] != ''){
+                                          $("#filtro_tematica_sec").append("<option value='"+data_csv[i][10]+"'>"+data_csv[i][10]+"</option>");
+                                        }
+                                        if(!($("#filtro_analisis option[value='"+data_csv[i][11]+"']").length > 0) && data_csv[i][11] != ''){
+                                          $("#filtro_analisis").append("<option value='"+data_csv[i][11]+"'>"+data_csv[i][11]+"</option>");
+                                        }
+                                      }
+                                      $("#filtro_status option[value='undefined']").remove();
+                                      $("#filtro_gerencia option[value='undefined']").remove();
+                                      $("#filtro_tematica_prin option[value='undefined']").remove();
+                                      $("#filtro_tematica_sec option[value='undefined']").remove();
+                                      $("#filtro_analisis option[value='undefined']").remove();
+
+                                      //first view
+                                      buildElements(results.data, start_pagination, limit_pagination);
+                                      //get pagination
+                                      totalPages = Math.ceil(data_csv.length / 25);
+                                      console.log(totalPages);
+
                                     }
                                   });
       });
-      function loadData(csv_data, start, limit){
+      function buildElements(csv_data, start, limit){
+        $("#table").html('');
+        var status, color, link, tiulo_proyecto, titulo, gerencia, tematica_prin, tematica_sec, analisis, miniatura;
         for(var i = start; i < limit; i++){
-          var status = (csv_data[i][5] != '')? csv_data[i][5] : 'Sin status';
-          var color = (csv_data[i][24] != '')? csv_data[i][24] : '#989898';
-          var link = (csv_data[i][20] != '')? '<a style="color:#212529;text-decoration: none;" href="'+csv_data[i][20]+'" target="_blank">VER MAPA</a>' : '';
-          var tiulo_proyecto = csv_data[i][1] + " - " + csv_data[i][2];
-          var titulo = csv_data[i][4];
-          var gerencia = csv_data[i][6];
-          var tematica_prin = csv_data[i][9];
-          var tematica_sec = csv_data[i][10];
-          var analisis = csv_data[i][11];
-          var miniatura = (csv_data[i][20] != '')? csv_data[i][20].replace("open", "thumbnail")+"&sz=w400-h300-p-k-nu" : csv_data[i][20];
+          status = (csv_data[i][5] != '')? csv_data[i][5] : 'Sin status';
+          color = (csv_data[i][24] != '')? csv_data[i][24] : '#989898';
+          link = (csv_data[i][20] != '')? '<a style="color:#212529;text-decoration: none;" href="'+csv_data[i][20]+'" target="_blank">VER MAPA</a>' : '';
+          tiulo_proyecto = csv_data[i][1] + " - " + csv_data[i][2];
+          titulo = csv_data[i][4];
+          gerencia = csv_data[i][6];
+          tematica_prin = csv_data[i][9];
+          tematica_sec = csv_data[i][10];
+          analisis = csv_data[i][11];
+          miniatura = (csv_data[i][20] != '')? csv_data[i][20].replace("open", "thumbnail")+"&sz=w400-h300-p-k-nu" : csv_data[i][20];
 
           $("#table").append("<div class='col-3'><div class='sombra card mb-3' style='background-color: "+color+" !important;'><div class='card-header' style='background: linear-gradient(to bottom, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.6) 100%), url("+miniatura+") no-repeat;'><ul class='list-group' style='color: "+color+";'><li class='list-group-item' style='background-color: #00000000; border-color: "+color+" !important;'>"+gerencia+"</li></ul><label class='mt-3' style='color: "+color+";'>"+tiulo_proyecto+"</label></div><div class='card-body'><p class='card-text'>"+titulo+"</p></div><div class='card-footer bg-transparent'>"+link+"</div></div></div>");
         }
       }
-      $("#filtro_status").on("change", function(){
+      function changePagination(orientation){
+        console.log(page)
+        switch(orientation){
+          case 'next':
+            if(page < totalPages){
+              start_pagination += 25;
+              limit_pagination += 25;
+              page++;
+              $("#page_back_top").removeClass("disabled");
+              $("#page_back_bottom").removeClass("disabled");
+              buildElements(data_csv, start_pagination, limit_pagination);
+            }
+            else{
+              $("#page_next_top").addClass("disabled");
+              $("#page_next_bottom").addClass("disabled");
+            }
+            break;
+          case 'back':
+            if(page === 1){
+              start_pagination = 1;
+              limit_pagination = 25;
+              buildElements(data_csv, start_pagination, limit_pagination);
+              $("#page_back_top").addClass("disabled");
+              $("#page_back_bottom").addClass("disabled");
+            }
+            else{
+              start_pagination -= 25;
+              limit_pagination -= 25;
+              page--;
+              buildElements(data_csv, start_pagination, limit_pagination);
+              $("#page_back_top").removeClass("disabled");
+              $("#page_back_bottom").removeClass("disabled");
+              $("#page_next_top").removeClass("disabled");
+              $("#page_next_bottom").removeClass("disabled");
+            }
+            break;
+        }
+      }
+      /*$("#filtro_status").on("change", function(){
         console.log("hola")
-      });
+      });*/
       /*text filtra por tiulo_proyecto y por titulo*/
     </script>
   </body>
