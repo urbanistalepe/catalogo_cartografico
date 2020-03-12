@@ -19,6 +19,10 @@
       .sombra:hover {
         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.8)
       }
+
+      .pointer{
+        cursor: pointer;
+      }
     </style>
   </head>
 
@@ -30,67 +34,44 @@
 
       <div class="row mt-5">
         <div class="col-4">
-          <select class="js-states form-control" id="filtro_status" multiple="multiple">
-            <!--<option>En Proceso</option>-->
-            <!--<option>Validado</option>-->
+          <select class="js-states form-control" id="filtro_status" multiple="multiple" onchange="filter()">
           </select>
         </div>
         <div class="col-4">
-          <select class="js-states form-control" id="filtro_gerencia" multiple="multiple">
-            <!--<option>(GTGIR) Gerencia Técnica de Gestión Integral del Riesgos.</option>-->
-            <!--<option>(GTGIR)Gerencia Técnica de Gestión Integral del Riesgos.</option>-->
-            <!--<option>(GTM) Gerencia Técnica de Movilidad.</option>-->
-            <!--<option>(GTOTGS) Gerencia Técnica de Ordenamiento Territorial y Gestión del Suelo.</option>-->
+          <select class="js-states form-control" id="filtro_gerencia" multiple="multiple" onchange="filter()">
           </select>
         </div>
         <div class="col-4">  
-          <select class="js-states form-control" id="filtro_tematica_prin" multiple="multiple">
-            <!--<option>DCU</option>-->
-            <!--<option>DIM</option>-->
-            <!--<option>GIA</option>-->
-            <!--<option>GRS</option>-->
-            <!--<option>HEM</option>-->
-            <!--<option>IVT</option>-->
-            <!--<option>PMR</option>-->
-            <!--<option>POT</option>-->
-            <!--<option>PRE</option>-->
-            <!--<option>SRT</option>-->
+          <select class="js-states form-control" id="filtro_tematica_prin" multiple="multiple" onchange="filter()">
           </select>
         </div>
       </div>
       <div class="row mt-3">
         <div class="col-4">
-          <select class="js-states form-control" id="filtro_tematica_sec" multiple="multiple">
-            <!--<option>DCU</option>-->
-            <!--<option>DIM</option>-->
-            <!--<option>GIA</option>-->
-            <!--<option>IVT</option>-->
-            <!--<option>PMR</option>-->
-            <!--<option>POT</option>-->
-            <!--<option>PRE</option>-->
-            <!--<option>SRT</option>-->
+          <select class="js-states form-control" id="filtro_tematica_sec" multiple="multiple" onchange="filter()">
           </select>
         </div>
         <div class="col-4">
-          <select class="js-states form-control" id="filtro_analisis" multiple="multiple">
-            <!--<option>Base</option>-->
-            <!--<option>Diagnóstico</option>-->
-            <!--<option>Estratégia</option>-->
+          <select class="js-states form-control" id="filtro_analisis" multiple="multiple" onchange="filter()">
           </select>
         </div>
-        <div class="col-4">
-          <input type="text" class="form-control" placeholder="Buscar">
+        <div class="col-4 input-group mb-3">
+          <input type="text" class="form-control" id="filtro_libre" placeholder="Buscar">
+          <div class="input-group-prepend">
+            <button class="btn btn-outline-secondary" type="button" onclick="filter()">Buscar</button>
+          </div>
         </div>
       </div>
 
       <nav class="mt-5">
+        <p class="text-right" id="pagination_top"></p>
         <ul class="pagination justify-content-end">
-          <li id="page_back_top" class="page-item disabled">
+          <li id="page_back_top" class="page-item disabled pointer">
             <a class="page-link" onclick="changePagination('back');">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li id="page_next_top" class="page-item">
+          <li id="page_next_top" class="page-item pointer">
             <a class="page-link" onclick="changePagination('next');">
               <span aria-hidden="true">&raquo;</span>
             </a>
@@ -103,13 +84,14 @@
       </div>
 
       <nav class="mt-5">
+        <p class="text-right" id="pagination_bottom"></p>
         <ul class="pagination justify-content-end">
-          <li id="page_back_bottom" class="page-item disabled">
+          <li id="page_back_bottom" class="page-item disabled pointer">
             <a class="page-link" onclick="changePagination('back');">
               <span aria-hidden="true">&laquo;</span>
             </a>
           </li>
-          <li id="page_next_bottom" class="page-item">
+          <li id="page_next_bottom" class="page-item pointer">
             <a class="page-link" onclick="changePagination('next');">
               <span aria-hidden="true">&raquo;</span>
             </a>
@@ -130,7 +112,7 @@
     <script type="text/javascript" src="js/papaparse.min.js"></script>
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
-        var filter_status, filter_gerencia, filter_tematica_prin, filter_tematica_sec, filter_tipo, data_csv = [];
+        var filter_status, filter_gerencia, filter_tematica_prin, filter_tematica_sec, filter_tipo, data_csv, temp = [];
         var start_pagination = 1, limit_pagination = 25, page = 1;
 
       $(document).ready(function(){
@@ -195,7 +177,8 @@
                                       buildElements(results.data, start_pagination, limit_pagination);
                                       //get pagination
                                       totalPages = Math.ceil(data_csv.length / 25);
-                                      console.log(totalPages);
+                                      $("#pagination_top").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
+                                      $("#pagination_bottom").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
 
                                     }
                                   });
@@ -219,7 +202,6 @@
         }
       }
       function changePagination(orientation){
-        console.log(page)
         switch(orientation){
           case 'next':
             if(page < totalPages){
@@ -234,6 +216,9 @@
               $("#page_next_top").addClass("disabled");
               $("#page_next_bottom").addClass("disabled");
             }
+
+            $("#pagination_top").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
+            $("#pagination_bottom").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
             break;
           case 'back':
             if(page === 1){
@@ -253,12 +238,140 @@
               $("#page_next_top").removeClass("disabled");
               $("#page_next_bottom").removeClass("disabled");
             }
+            
+            $("#pagination_top").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
+            $("#pagination_bottom").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
             break;
         }
       }
-      /*$("#filtro_status").on("change", function(){
-        console.log("hola")
-      });*/
+      function filter(){
+        temp = [];
+        //check all filter
+        var status_filter = ($("#filtro_status").val()) ? $("#filtro_status").val() : 0;
+        var gerencia_filter = ($("#filtro_gerencia").val()) ? $("#filtro_gerencia").val() : 0;
+        var tema_prin_filter = ($("#filtro_tematica_prin").val()) ? $("#filtro_tematica_prin").val() : 0;
+        var tema_sec_filter = ($("#filtro_tematica_sec").val()) ? $("#filtro_tematica_sec").val() : 0;
+        var analisis_filter = ($("#filtro_analisis").val()) ? $("#filtro_analisis").val() : 0;
+        var libre_filter = $("#filtro_libre").val();
+
+        
+        if(status_filter.length > 0){
+          for(var j = 0; j < status_filter.length; j++){
+            if(temp.length === 0){
+              for (var i = 1; i < data_csv.length; i++) {
+                if(status_filter[j] === data_csv[i][5]){
+                  temp.push(data_csv[i]);
+                }
+              }
+            }
+            else{
+              for(var i = 0; i < temp.length; i++){
+                if(status_filter[j] != temp[i][5]){
+                  temp.slice(i);
+                }
+              }
+            }
+          }
+        }
+        if(gerencia_filter.length > 0){
+          for(var j = 0; j < gerencia_filter.length; j++){
+            if(temp.length === 0){
+              for (var i = 1; i < data_csv.length; i++) {
+                if(gerencia_filter[j] === data_csv[i][6]){
+                  temp.push(data_csv[i]);
+                }
+              }
+            }
+            else{
+              for(var i = 0; i < temp.length; i++){
+                if(gerencia_filter[j] != temp[i][6]){
+                  temp.slice(i);
+                }
+              }
+            }
+          }
+        }
+        if(tema_prin_filter.length > 0){
+          for(var j = 0; j < tema_prin_filter.length; j++){
+            if(temp.length === 0){
+              for (var i = 1; i < data_csv.length; i++) {
+                if(tema_prin_filter[j] === data_csv[i][9]){
+                  temp.push(data_csv[i]);
+                }
+              }
+            }
+            else{
+              for(var i = 0; i < temp.length; i++){
+                if(tema_prin_filter[j] != temp[i][9]){
+                  temp.slice(i);
+                }
+              }
+            }
+          }
+        }
+        if(tema_sec_filter.length > 0){
+          for(var j = 0; j < tema_sec_filter.length; j++){
+            if(temp.length === 0){
+              for (var i = 1; i < data_csv.length; i++) {
+                if(tema_sec_filter[j] === data_csv[i][10]){
+                  temp.push(data_csv[i]);
+                }
+              }
+            }
+            else{
+              for(var i = 0; i < temp.length; i++){
+                if(tema_sec_filter[j] != temp[i][10]){
+                  temp.slice(i);
+                }
+              }
+            }
+          }
+        }
+        if(analisis_filter.length > 0){
+          for(var j = 0; j < analisis_filter.length; j++){
+            if(temp.length === 0){
+              for (var i = 1; i < data_csv.length; i++) {
+                if(analisis_filter[j] === data_csv[i][11]){
+                  temp.push(data_csv[i]);
+                }
+              }
+            }
+            else{
+              for(var i = 0; i < temp.length; i++){
+                if(analisis_filter[j] != temp[i][11]){
+                  temp.slice(i);
+                }
+              }
+            }
+          }
+        }
+        /*if(libre_filter.length > 0){
+          if((data_csv[i][1].indexOf(libre_filter) != -1 && data_csv[i][1] != '') || (data_csv[i][4].indexOf(libre_filter) != -1 && data_csv[i][4] != '')){
+              console.log(libre_filter + " found");
+          }
+        }*/
+        
+        console.log(temp)
+        start_pagination = 1;
+        limit_pagination = 25;
+        page = 1;
+
+        if(temp.length > 0){
+          buildElements(temp, start_pagination, limit_pagination);
+          totalPages = Math.ceil(temp.length / 25);
+        }
+        else{
+          buildElements(data_csv, start_pagination, limit_pagination);
+          totalPages = Math.ceil(data_csv.length / 25);
+        }
+        
+        $("#pagination_top").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
+        $("#pagination_bottom").html("Página "+page+" - "+totalPages+" / "+data_csv.length);
+        $("#page_back_top").addClass("disabled");
+        $("#page_back_bottom").addClass("disabled");
+        $("#page_next_top").removeClass("disabled");
+        $("#page_next_bottom").removeClass("disabled");
+      }
       /*text filtra por tiulo_proyecto y por titulo*/
     </script>
   </body>
