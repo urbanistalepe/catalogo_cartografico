@@ -113,7 +113,7 @@
     <script type="text/javascript" src="js/bootstrap.min.js"></script>
     <script type="text/javascript">
         var filter_status, filter_gerencia, filter_tematica_prin, filter_tematica_sec, filter_tipo, data_csv, temp = [];
-        var start_pagination = 1, limit_pagination = 25, page = 1;
+        var start_pagination = 0, limit_pagination = 25, page = 1;
 
       $(document).ready(function(){
         $("#filtro_status").select2({
@@ -149,24 +149,26 @@
                                     complete: function(results) {
                                       //
                                       data_csv = results.data;
+                                      data_csv.splice(0,1);
+                                      console.log(data_csv)
 
-                                      for( var i = 1; i < data_csv.length; i++){
-                                        if(!($("#filtro_status option[value='"+data_csv[i][5]+"']").length > 0) && data_csv[i][5] != ''){
-                                          $("#filtro_status").append("<option value='"+data_csv[i][5]+"'>"+data_csv[i][5]+"</option>");
+                                      data_csv.forEach( function (datos, index){
+                                        if(!($("#filtro_status option[value='"+datos[5]+"']").length > 0) && datos[5] != ''){
+                                          $("#filtro_status").append("<option value='"+datos[5]+"'>"+datos[5]+"</option>");
                                         }
-                                        if(!($("#filtro_gerencia option[value='"+data_csv[i][6]+"']").length > 0) && data_csv[i][6] != ''){
-                                          $("#filtro_gerencia").append("<option value='"+data_csv[i][6]+"'>"+data_csv[i][6]+"</option>");
+                                        if(!($("#filtro_gerencia option[value='"+datos[6]+"']").length > 0) && datos[6] != ''){
+                                          $("#filtro_gerencia").append("<option value='"+datos[6]+"'>"+datos[6]+"</option>");
                                         }
-                                        if(!($("#filtro_tematica_prin option[value='"+data_csv[i][9]+"']").length > 0) && data_csv[i][9] != ''){
-                                          $("#filtro_tematica_prin").append("<option value='"+data_csv[i][9]+"'>"+data_csv[i][9]+"</option>");
+                                        if(!($("#filtro_tematica_prin option[value='"+datos[9]+"']").length > 0) && datos[9] != ''){
+                                          $("#filtro_tematica_prin").append("<option value='"+datos[9]+"'>"+datos[9]+"</option>");
                                         }
-                                        if(!($("#filtro_tematica_sec option[value='"+data_csv[i][10]+"']").length > 0) && data_csv[i][10] != ''){
-                                          $("#filtro_tematica_sec").append("<option value='"+data_csv[i][10]+"'>"+data_csv[i][10]+"</option>");
+                                        if(!($("#filtro_tematica_sec option[value='"+datos[10]+"']").length > 0) && datos[10] != ''){
+                                          $("#filtro_tematica_sec").append("<option value='"+datos[10]+"'>"+datos[10]+"</option>");
                                         }
-                                        if(!($("#filtro_analisis option[value='"+data_csv[i][11]+"']").length > 0) && data_csv[i][11] != ''){
-                                          $("#filtro_analisis").append("<option value='"+data_csv[i][11]+"'>"+data_csv[i][11]+"</option>");
+                                        if(!($("#filtro_analisis option[value='"+datos[11]+"']").length > 0) && datos[11] != ''){
+                                          $("#filtro_analisis").append("<option value='"+datos[11]+"'>"+datos[11]+"</option>");
                                         }
-                                      }
+                                      });
                                       $("#filtro_status option[value='undefined']").remove();
                                       $("#filtro_gerencia option[value='undefined']").remove();
                                       $("#filtro_tematica_prin option[value='undefined']").remove();
@@ -255,16 +257,19 @@
         var libre_filter = $("#filtro_libre").val();
 
         
-        if(status_filter.length > 0){
-          for(var j = 0; j < status_filter.length; j++){
-            if(temp.length === 0){
+        if(status_filter != 0){
+          if(temp.length === 0){
+            for(var j = 0; j < status_filter.length; j++){
               for (var i = 1; i < data_csv.length; i++) {
-                if(status_filter[j] === data_csv[i][5]){
-                  temp.push(data_csv[i]);
+                if(data_csv[i].indexOf(status_filter[j]) > 0){
+                  //temp.push(data_csv[i]);
+                  console.log(i)
                 }
               }
             }
-            else{
+          }
+          else{
+            for(var j = 0; j < status_filter.length; j++){
               for(var i = 0; i < temp.length; i++){
                 if(status_filter[j] != temp[i][5]){
                   temp.slice(i);
@@ -273,7 +278,7 @@
             }
           }
         }
-        if(gerencia_filter.length > 0){
+        /*if(gerencia_filter != 0){
           for(var j = 0; j < gerencia_filter.length; j++){
             if(temp.length === 0){
               for (var i = 1; i < data_csv.length; i++) {
@@ -291,7 +296,7 @@
             }
           }
         }
-        if(tema_prin_filter.length > 0){
+        if(tema_prin_filter != 0){
           for(var j = 0; j < tema_prin_filter.length; j++){
             if(temp.length === 0){
               for (var i = 1; i < data_csv.length; i++) {
@@ -309,7 +314,7 @@
             }
           }
         }
-        if(tema_sec_filter.length > 0){
+        if(tema_sec_filter != 0){
           for(var j = 0; j < tema_sec_filter.length; j++){
             if(temp.length === 0){
               for (var i = 1; i < data_csv.length; i++) {
@@ -327,7 +332,7 @@
             }
           }
         }
-        if(analisis_filter.length > 0){
+        if(analisis_filter != 0){
           for(var j = 0; j < analisis_filter.length; j++){
             if(temp.length === 0){
               for (var i = 1; i < data_csv.length; i++) {
@@ -345,7 +350,7 @@
             }
           }
         }
-        /*if(libre_filter.length > 0){
+        /*if(libre_filter != 0){
           if((data_csv[i][1].indexOf(libre_filter) != -1 && data_csv[i][1] != '') || (data_csv[i][4].indexOf(libre_filter) != -1 && data_csv[i][4] != '')){
               console.log(libre_filter + " found");
           }
