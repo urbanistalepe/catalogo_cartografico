@@ -134,27 +134,52 @@
         $("#filtro_status").select2({
           width: 'resolve',
           language: "es",
-          placeholder: 'Estatus del análisis'
+          placeholder: 'Estatus del análisis',
+          sorter: function(data) {
+              return data.sort(function(a, b) {
+                  return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+              });
+          }
         });
         $("#filtro_gerencia").select2({
           width: 'resolve',
           language: "es",
-          placeholder: 'Gerencia'
+          placeholder: 'Gerencia',
+          sorter: function(data) {
+              return data.sort(function(a, b) {
+                  return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+              });
+          }
         });
         $("#filtro_tematica_prin").select2({
           width: 'resolve',
           language: "es",
-          placeholder: 'Temática principal LGAHOTDU'
+          placeholder: 'Temática principal LGAHOTDU',
+          sorter: function(data) {
+              return data.sort(function(a, b) {
+                  return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+              });
+          }
         });
         $("#filtro_tematica_sec").select2({
           width: 'resolve',
           language: "es",
-          placeholder: 'Temática secundaria LGAHOTDU'
+          placeholder: 'Temática secundaria LGAHOTDU',
+          sorter: function(data) {
+              return data.sort(function(a, b) {
+                  return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+              });
+          }
         });
         $("#filtro_analisis").select2({
           width: 'resolve',
           language: "es",
-          placeholder: 'Tipo de análisis'
+          placeholder: 'Tipo de análisis',
+          sorter: function(data) {
+              return data.sort(function(a, b) {
+                  return a.text < b.text ? -1 : a.text > b.text ? 1 : 0;
+              });
+          }
         });
         var config = {download: true, delimiter: ","};
         var file = "data/rac_18022020.csv";
