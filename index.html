@@ -70,12 +70,12 @@
           <select class="js-states form-control" id="filtro_analisis" multiple="multiple" onchange="filter()">
           </select>
         </div>
-        <!--<div class="col-4 input-group mb-3">
+        <div class="col-4 input-group mb-3">
           <input type="text" class="form-control" id="filtro_libre" placeholder="Buscar">
           <div class="input-group-prepend">
             <button class="btn btn-outline-secondary" type="button" onclick="filter()">Buscar</button>
           </div>
-        </div>-->
+        </div>
       </div>
 
       <nav class="mt-5">
@@ -313,7 +313,7 @@
         var tema_prin_filter = ($("#filtro_tematica_prin").val()) ? $("#filtro_tematica_prin").val() : [];
         var tema_sec_filter = ($("#filtro_tematica_sec").val()) ? $("#filtro_tematica_sec").val() : [];
         var analisis_filter = ($("#filtro_analisis").val()) ? $("#filtro_analisis").val() : [];
-        //var libre_filter = $("#filtro_libre").val();
+        var libre_filter = $("#filtro_libre").val();
 
         var filter = {};
 
@@ -330,13 +330,10 @@
 
         var filterKeys = Object.keys(filter);
         temp = data_csv.filter((item) => filterKeys.every((key) => (filter[key].indexOf(item[key]) !== -1)));
-
-
-        /*if(libre_filter != 0){
-          if((data_csv[i][1].indexOf(libre_filter) != -1 && data_csv[i][1] != '') || (data_csv[i][4].indexOf(libre_filter) != -1 && data_csv[i][4] != '')){
-              console.log(libre_filter + " found");
-          }
-        }*/
+        
+        if(libre_filter){
+          temp = temp.filter((product) => product.clave_de_mapa.toLowerCase().indexOf(libre_filter) !== -1 || product.nombre_analisis.toLowerCase().indexOf(libre_filter) !== -1 );//product.clave_de_mapa.includes(libre_filter) !== -1 || product.nombre_analisis.includes(libre_filter) !== -1);
+        }
         
         console.log(temp)
         console.log(filter)
@@ -344,7 +341,7 @@
         limit_pagination = 24;
         page = 1;
 
-        if(filter){
+        if(filter || libre_filter){
           totalPages = Math.ceil(temp.length / 24);
           $("#pagination_top").html("Página "+page+" - "+totalPages+" / "+temp.length);
           $("#pagination_bottom").html("Página "+page+" - "+totalPages+" / "+temp.length);
